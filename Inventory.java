@@ -3,7 +3,7 @@
  * Bill Xia
  *
  * Created: 1/10/23
- * Updated: 1/10/23
+ * Updated: 1/16/23
  *
  * Purpose: A superclass meant to be extended by the Village, Town, and
  *          Caravan classes.
@@ -38,6 +38,15 @@ public class Inventory {
     Inventory(String s) { this.name = s; }
 
     /* GETTER METHODS - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /*
+     * toString()
+     * Returns the name of the Inventory.
+     */
+    public String toString()
+    {
+        return this.name;
+    }
 
     /*
      * checkAmountOf()
