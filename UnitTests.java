@@ -15,21 +15,28 @@ import java.lang.reflect.*;
 /* Class */
 public class UnitTests {
 
-    /* TESTING DATA STRUCTURES - - - - - - - - - - - - - - - - - - - - - - - */
+    /* TESTING VARS - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-    private static Map<String, Integer> testInventory = new HashMap<>();
-    private static List<String>         testProduces  = new ArrayList<>();
-    private static Map<String, Float>   testPRatio    = new HashMap<>();
+    private static Item testItem;
+    private static Item grain;
+    private static Item bread;
+    private static Map<Item, Integer> testInventory = new HashMap<>();
+    private static List<Item>         testProduces  = new ArrayList<>();
+    private static Map<Item, Float>   testPRatio    = new HashMap<>();
 
     /* CONSTRUCTORS - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
     UnitTests() {
-        testInventory.put("Grain", 100);
-        testInventory.put("Bread", 100);
+        testItem = new Item("test", ItemType.RAW);
+        grain    = new Item("Grain", ItemType.RAW);
+        bread    = new Item("Bread", ItemType.MADE);
 
-        testProduces.add("Grain");
+        testInventory.put(grain, 100);
+        testInventory.put(bread, 100);
 
-        testPRatio.put("Grain", 1.5f);
+        testProduces.add(grain);
+
+        testPRatio.put(grain, 1.5f);
     }
 
     /* INVENTORY - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -44,7 +51,7 @@ public class UnitTests {
         Inventory i = new Inventory("test");
 
         assert(i.toString() == "test");
-        assert(i.checkAmountOf("thing").equals(0));
+        assert(i.checkAmountOf(testItem).equals(0));
         assert(i.checkBalance().equals(0));
     }
 
@@ -52,8 +59,8 @@ public class UnitTests {
     public static void verify_buysOfFor() {
         Inventory i = new Inventory("test");
 
-        i.buys_of_for_(10, "thing", 0);
-        assert(i.checkAmountOf("thing").equals(10));
+        i.buys_of_for_(10, testItem, 0);
+        assert(i.checkAmountOf(testItem).equals(10));
         assert(i.checkBalance().equals(0));
     }
 
@@ -61,8 +68,8 @@ public class UnitTests {
     public static void verify_sellsOfFor() {
         Inventory i = new Inventory("test");
 
-        i.sells_of_for_(0, "thing", 10);
-        assert(i.checkAmountOf("thing").equals(0));
+        i.sells_of_for_(0, testItem, 10);
+        assert(i.checkAmountOf(testItem).equals(0));
         assert(i.checkBalance().equals(10));
     }
 
@@ -73,7 +80,7 @@ public class UnitTests {
         Village v = new Village("test", testInventory, 10, testProduces);
 
         assert(v.toString().equals("test"));
-        assert(v.checkAmountOf("Grain").equals(100));
+        assert(v.checkAmountOf(grain).equals(100));
         assert(v.checkBalance().equals(0));
         assert(v.getPopulation().equals(10));
     }
@@ -83,7 +90,8 @@ public class UnitTests {
         Village v = new Village("test", testInventory, 10, testProduces);
 
         v.onStep(testPRatio);
-        assert(v.checkAmountOf("Grain").equals(115));
+        assert(v.checkAmountOf(grain).equals(115));
+        assert(v.checkAmountOf(bread).equals(90));
     }
 
     /* TEST MAIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

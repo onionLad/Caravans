@@ -1,0 +1,1 @@
+public enum ItemType { RAW, MADE };

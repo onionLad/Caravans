@@ -21,7 +21,7 @@ public class Village extends Inventory {
      * Produces
      * A List of raw materials that the village can produce.
      */
-    private List<String> produces;
+    private List<Item> produces;
 
     /*
      * Population
@@ -33,13 +33,13 @@ public class Village extends Inventory {
     /* CONSTRUCTORS - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
     /* Village Constructor */
-    Village(String name, Map<String, Integer> inventory, int population,
-            List<String> produces) {
+    Village(String name, Map<Item, Integer> inventory, int population,
+            List<Item> produces) {
 
         this.name = name;
 
         if (inventory != null) {
-            for (String item : inventory.keySet()) {
+            for (Item item : inventory.keySet()) {
                 this.addToInventory(item, inventory.get(item));
             }
         }
@@ -73,15 +73,20 @@ public class Village extends Inventory {
      * Input: A Map that tells the Village how much of a given raw material a
      *        single villager can produce.
      */
-    public void onStep(Map<String, Float> pRatio)
+    public void onStep(Map<Item, Float> pRatio)
     {
         /* Produce raw materials */
-        for (String material : produces) {
+        for (Item material : produces) {
             Integer produced = (int) Math.floor(pRatio.get(material) * population.floatValue());
             addToInventory(material, produced);
         }
 
         /* Consume finished goods */
+        for (Item i : this.inventory.keySet()) {
+            if (i.itemType().equals(ItemType.MADE)) {
+                remFromInventory(i, population);
+            }
+        }
     }
 
 }

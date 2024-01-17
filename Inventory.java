@@ -23,7 +23,7 @@ public class Inventory {
      * The Inventory
      * This data structure maps item names to their integer quantities.
      */
-    protected Map<String, Integer> inventory = new HashMap<>();
+    protected Map<Item, Integer> inventory = new HashMap<>();
 
     /*
      * Silver
@@ -55,7 +55,7 @@ public class Inventory {
      * checkAmountOf()
      * Returns how many of the queried item exist in inventory.
      */
-    public Integer checkAmountOf(String item)
+    public Integer checkAmountOf(Item item)
     {
         if (this.inventory.containsKey(item)) {
             return this.inventory.get(item);
@@ -75,13 +75,25 @@ public class Inventory {
 
     /* PRIVATE HELPER METHODS - - - - - - - - - - - - - - - - - - - - - - - */
 
-    protected void addToInventory(String item, Integer n)
+    /* Adds n items to the Inventory. */
+    protected void addToInventory(Item item, Integer n)
     {
         if (this.inventory.containsKey(item)) {
             Integer prev = this.inventory.get(item);
             this.inventory.put(item, prev + n);
         } else {
             this.inventory.put(item, n);
+        }
+    }
+
+    /* Removes n items from the Inventory. */
+    protected void remFromInventory(Item item, Integer n)
+    {
+        if (this.inventory.containsKey(item)) {
+            Integer prev = this.inventory.get(item);
+            this.inventory.put(item, prev - n);
+        } else if (!n.equals(Integer.valueOf(0))) {
+            throw new RuntimeException();
         }
     }
 
@@ -92,7 +104,7 @@ public class Inventory {
      * Adds some number of a given item to inventory while subtracting some
      * amount from silver. The cost is for the entire purchase.
      */
-    public void buys_of_for_(Integer n, String item, Integer cost)
+    public void buys_of_for_(Integer n, Item item, Integer cost)
     {
         if (cost > this.silver) {
             throw new RuntimeException(
@@ -110,12 +122,11 @@ public class Inventory {
      * Subtracts some number of a given item from inventory while adding some
      * amount to silver. The cost is for the entire purchase.
      */
-    public void sells_of_for_(Integer n, String item, Integer cost)
+    public void sells_of_for_(Integer n, Item item, Integer cost)
     {
-        if (this.inventory.containsKey(item)) {
-            Integer prev = this.inventory.get(item);
-            this.inventory.put(item, prev - n);
-        } else if (!n.equals(Integer.valueOf(0))) {
+        try {
+            remFromInventory(item, n);
+        } catch (Exception e) {
             throw new RuntimeException(
                 this.name + " has no " + item + " to sell."
             );
