@@ -9,7 +9,7 @@
  *          Caravan classes.
  */
 
- /* Imports */
+/* Imports */
 import java.util.*;
 
 /* Class */
@@ -17,13 +17,13 @@ public class Inventory {
 
     /* MEMBER VARIABLES - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-    private String name = "_";
+    protected String name;
 
     /*
      * The Inventory
      * This data structure maps item names to their integer quantities.
      */
-    private Map<String, Integer> inventory = new HashMap<>();
+    protected Map<String, Integer> inventory = new HashMap<>();
 
     /*
      * Silver
@@ -35,6 +35,9 @@ public class Inventory {
     /* CONSTRUCTORS - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
     /* Default Constructor */
+    Inventory() { this.name = ""; }
+
+    /* String Constructor */
     Inventory(String s) { this.name = s; }
 
     /* GETTER METHODS - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -70,6 +73,18 @@ public class Inventory {
         return this.silver;
     }
 
+    /* PRIVATE HELPER METHODS - - - - - - - - - - - - - - - - - - - - - - - */
+
+    protected void addToInventory(String item, Integer n)
+    {
+        if (this.inventory.containsKey(item)) {
+            Integer prev = this.inventory.get(item);
+            this.inventory.put(item, prev + n);
+        } else {
+            this.inventory.put(item, n);
+        }
+    }
+
     /* SETTER METHODS - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
     /*
@@ -87,12 +102,7 @@ public class Inventory {
             this.silver -= cost;
         }
 
-        if (this.inventory.containsKey(item)) {
-            Integer prev = this.inventory.get(item);
-            this.inventory.put(item, prev + n);
-        } else {
-            this.inventory.put(item, n);
-        }
+        this.addToInventory(item, n);
     }
 
     /*
@@ -105,7 +115,7 @@ public class Inventory {
         if (this.inventory.containsKey(item)) {
             Integer prev = this.inventory.get(item);
             this.inventory.put(item, prev - n);
-        } else {
+        } else if (!n.equals(Integer.valueOf(0))) {
             throw new RuntimeException(
                 this.name + " has no " + item + " to sell."
             );
