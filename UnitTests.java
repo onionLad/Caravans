@@ -22,7 +22,8 @@ public class UnitTests {
     private static Item bread;
     private static Map<Item, Integer> testInventory = new HashMap<>();
     private static List<Item>         testProduces  = new ArrayList<>();
-    private static Map<Item, Float>   testPRatio    = new HashMap<>();
+    private static Map<Item, Float>   testVRatio    = new HashMap<>();
+    private static Map<Item, Map<Item, Integer>> testRMap = new HashMap<>();
 
     /* CONSTRUCTORS - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -36,7 +37,11 @@ public class UnitTests {
 
         testProduces.add(grain);
 
-        testPRatio.put(grain, 1.5f);
+        testVRatio.put(grain, 1.5f);
+
+        Map<Item, Integer> breadRecipe = new HashMap<>();
+        breadRecipe.put(grain, 2);
+        testRMap.put(bread, breadRecipe);
     }
 
     /* INVENTORY - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -86,12 +91,45 @@ public class UnitTests {
     }
 
     @Test
-    public static void verify_onStep1() {
+    public static void verify_onStep_v1() {
         Village v = new Village("test", testInventory, 10, testProduces);
 
-        v.onStep(testPRatio);
+        v.onStep(testVRatio);
         assert(v.checkAmountOf(grain).equals(115));
         assert(v.checkAmountOf(bread).equals(90));
+    }
+
+    @Test
+    public static void verify_onStep_v2() {
+        Village v = new Village("test", testInventory, 10, testProduces);
+
+        try {
+            for (int i = 0; i < 20; i++) { v.onStep(testVRatio); }
+            assert false;
+        } catch (Exception e) {
+            assert true;
+        }
+    }
+
+    /* TOWNS - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    @Test
+    public static void verify_initTown() {
+        Town t = new Town("test", testInventory, 10, testProduces);
+
+        assert(t.toString().equals("test"));
+        assert(t.checkAmountOf(grain).equals(100));
+        assert(t.checkBalance().equals(0));
+        assert(t.getPopulation().equals(10));
+    }
+
+    @Test
+    public static void verify_onStep_t1() {
+        Town t = new Town("test", testInventory, 10, testProduces);
+
+        t.onStep(testRMap);
+        assert(t.checkAmountOf(grain).equals(90));
+        assert(t.checkAmountOf(bread).equals(100));
     }
 
     /* TEST MAIN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

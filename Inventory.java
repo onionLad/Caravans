@@ -89,7 +89,7 @@ public class Inventory {
     /* Removes n items from the Inventory. */
     protected void remFromInventory(Item item, Integer n)
     {
-        if (this.inventory.containsKey(item)) {
+        if (this.inventory.containsKey(item) && this.inventory.get(item) > 0) {
             Integer prev = this.inventory.get(item);
             this.inventory.put(item, prev - n);
         } else if (!n.equals(Integer.valueOf(0))) {
